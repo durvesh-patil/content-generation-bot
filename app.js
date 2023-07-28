@@ -1,8 +1,10 @@
 const { Configuration, OpenAIApi } = require('openai')
 const dotenv = require('dotenv');
 const express = require('express')
+const { sendZenprompt, sendPrompt } = require('./get-prompts')
 
 const app = new express();
+let sum = false
 
 dotenv.config({ path: "./config.env" })
 
@@ -12,54 +14,16 @@ const configuration = new Configuration({
 
 const openAi = new OpenAIApi(configuration);
 
-// app.post("/find-complexity", async (req, res) => {
-//     try {
+const main = async () => {
+    const response = await sendZenprompt(openAi);
+    const imagePrompt = await sendPrompt(openAi, `'${response}', based on the this story create prompts so that i can give it to an image genrating ai to give me images to accompany each part of the story,also make sure the prompts are relatable to other prompts so that it can generate images as if they are same part of the story,limit it to only 5 prompts with much detailin prompt  so that it can capture peoples attention and generate much better image bringing life to the story     `)
+    console.log(imagePrompt);
+    console.log(response);
 
-//         const response = await openAi.createCompletion({
-//             model: "text-davinci-003",
-//             prompt: `console.log("hello")
-//              The time complexity of this function is
-//               ###`
-//         });
-
-
-//         return res.status(200).json({
-//             status: "success",
-//             message: `${response.data.choices[0].text}`
-//         })
-//     } catch (error) {
-//         return res.status(400).json({
-//             status: "failed",
-//             message: `${error}`
-//         })
-
-//     }
-// })
-let sum = false
-
-const sendZenPrompt = async () => {
-    try {
-        const prompt = sum ? `try a different story ` : `Assume you are a storyteller and a zen meditation trainer.
-        Your goal is to onboard more people into trying zen meditation with the help of spreading out its benefits and advantages using stories regarding peace mindfulness calmness concentration etc.
-        Create a unique short story/quotes   which would inspire people to try zen meditation`
-
-        const response = await openAi.createCompletion({
-            model: "text-davinci-003",
-            prompt: `${prompt}`,
-            max_tokens: 300
-
-        });
-
-
-        console.log(response.data.choices[0].text);
-    } catch (error) {
-
-
-    }
 }
-sendZenPrompt()
-// const port = process.env.PORT || 5000;
 
-// app.listen(port, () => console.log(`app running on port ${port}`))
+main();
+
+
 
 
