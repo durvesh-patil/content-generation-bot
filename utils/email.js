@@ -1,28 +1,31 @@
 const nodemailer = require('nodemailer')
 
-exports.sendEmailImagesAndPrompts = async () => {
+
+exports.sendEmailImagesAndPrompts = async (from, to, body) => {
+
     try {
 
-        const mailOptions = {
-            from: 'konkmk112003@gmail.com',
-            to: 'kmk112003@gmail.com',
-            subject: 'This is a test email',
-            body: 'This is the body of the email.',
-        };
-
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: false,
+            service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USERNAME,
-                password: process.env.EMAIL_PASSWORD,
+                pass: process.env.APP_PASSWORD
             },
         });
 
-        await transporter.sendMail(mailOptions);
-        console.log(`email sent successfully`);
+
+        const mailOptions = {
+            from: `${from}`,
+            to: `${to}`,
+            subject: 'Content-Images for each paragraph is given in order ',
+            text: `${body}`,
+        };
+
+        await transporter.sendMail(mailOptions)
+        console.log('email sent!!!');
+
     } catch (err) {
         console.log(err);
     }
+
 }
